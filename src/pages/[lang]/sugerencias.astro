@@ -1,0 +1,60 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/ui';
+import HeroRive from '../../components/HeroRive.astro';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'en' } },
+  ];
+}
+const { lang } = Astro.params;
+const t = useTranslations(lang);
+---
+<Layout title="Sugerencias - Saboria" lang={lang} t={t}>
+  <div class="h-20 bg-stone-900"></div>
+  
+  <HeroRive title={t('sug.title')} description={t('sug.desc')} />
+
+  <section class="py-24 bg-stone-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+        <div class="bg-white p-10 rounded-3xl shadow-xl shadow-stone-200/50">
+          <h2 class="text-3xl font-bold font-serif text-stone-900 mb-6">{t('sug.form.title')}</h2>
+          <form class="space-y-6">
+            <div>
+              <label class="block text-sm font-semibold text-stone-700 mb-2">{t('sug.form.name')}</label>
+              <input type="text" class="w-full px-4 py-3 rounded-xl bg-stone-50 border border-stone-200" required>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-stone-700 mb-2">{t('sug.form.rate')}</label>
+              <select class="w-full px-4 py-3 rounded-xl bg-stone-50 border border-stone-200" required>
+                <option value="5">{t('sug.form.rate.5')}</option>
+                <option value="4">{t('sug.form.rate.4')}</option>
+                <option value="3">{t('sug.form.rate.3')}</option>
+                <option value="2">{t('sug.form.rate.2')}</option>
+                <option value="1">{t('sug.form.rate.1')}</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-stone-700 mb-2">{t('sug.form.comment')}</label>
+              <textarea rows="5" class="w-full px-4 py-3 rounded-xl bg-stone-50 border border-stone-200 resize-none" required></textarea>
+            </div>
+            <button type="submit" class="w-full py-4 rounded-xl bg-stone-900 text-white font-bold">{t('sug.form.btn')}</button>
+          </form>
+        </div>
+        <div class="space-y-8">
+          <h2 class="text-3xl font-bold font-serif text-stone-900 mb-6">{t('sug.rev.title')}</h2>
+          <div class="bg-white p-8 rounded-3xl shadow-md border border-stone-100">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold text-xl">C</div>
+              <div><h4 class="font-bold text-stone-900">Carlos Mendoza</h4><div class="text-orange-400 text-sm">⭐⭐⭐⭐⭐</div></div>
+            </div>
+            <p class="text-stone-600 italic">"El mejor corte de carne que he probado en Mérida. El ambiente es increíble y la atención de primera."</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

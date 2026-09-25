@@ -1,0 +1,80 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { useTranslations } from "../../i18n/ui";
+import { menuData } from "../../data/menuData";
+import HeroRive from "../../components/HeroRive.astro";
+
+export function getStaticPaths() {
+  return [{ params: { lang: "es" } }, { params: { lang: "en" } }];
+}
+const lang = Astro.params.lang as "es" | "en";
+const t = useTranslations(lang);
+
+// Definimos la estructura exacta para que TypeScript no se queje de 'any'
+interface MenuItem {
+  name: string;
+  description: string;
+  price: string;
+  image: string;
+}
+
+interface MenuCategory {
+  category: string;
+  items: MenuItem[];
+}
+
+const menuItems = menuData[lang] as MenuCategory[];
+---
+
+<Layout title="Menu - Saboria" lang={lang} t={t}>
+  <div class="h-20 bg-stone-900"></div>
+
+  <HeroRive title={t("menu.title")} description={t("menu.desc")} />
+
+  <div class="bg-stone-50 py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-32">
+      {
+        menuItems.map((category) => (
+          <section>
+            <div class="flex items-center gap-6 mb-12">
+              <h2 class="text-3xl md:text-4xl font-bold font-serif text-stone-900">
+                {category.category}
+              </h2>
+              <div class="flex-grow h-px bg-stone-300" />
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {category.items.map((item) => (
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-lg flex flex-col hover:-translate-y-1 transition-all">
+                  <div class="relative h-48 bg-stone-200">
+                    <img
+                      src={item.image}
+                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      loading="lazy"
+                    />
+                    <div class="absolute top-3 right-3 bg-white/90 px-3 py-1 rounded-full font-bold text-stone-900 shadow-sm text-sm">
+                      {item.price}
+                    </div>
+                  </div>
+                  <div class="p-6 flex flex-col flex-grow">
+                    <h3 class="text-xl font-bold font-serif text-stone-900 mb-2">
+                      {item.name}
+                    </h3>
+                    <p class="text-stone-600 text-sm mb-6 flex-grow">
+                      {item.description}
+                    </p>
+                    <button
+                      onclick={`window.addToCart('${item.name}', '${item.price}', '${item.image}')`}
+                      class="text-orange-600 font-bold text-sm uppercase flex items-center gap-2"
+                    >
+                      {t("menu.add")}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))
+      }
+    </div>
+  </div>
+</Layout>

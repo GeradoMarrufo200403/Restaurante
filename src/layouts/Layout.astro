@@ -1,0 +1,399 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  lang: string;
+  t: (key: string) => string;
+}
+
+const { title, lang, t } = Astro.props;
+const otherLang = lang === "es" ? "en" : "es";
+---
+
+<!doctype html>
+<html lang={lang} class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={t("footer.desc")} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    class="bg-stone-50 text-stone-800 font-sans antialiased selection:bg-orange-200 selection:text-orange-900 relative"
+  >
+    <header
+      class="fixed w-full z-40 transition-all duration-300 bg-white/90 backdrop-blur-md border-b border-stone-200/50 shadow-sm"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+          <a href={`/${lang}/#inicio`} class="flex items-center gap-2 group">
+            <span
+              class="text-2xl font-serif font-bold text-stone-900 group-hover:text-orange-600 transition-colors"
+              >Saboria</span
+            >
+          </a>
+
+          <nav class="hidden md:flex gap-6 items-center">
+            <a
+              href={`/${lang}/#inicio`}
+              class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors"
+              >{t("nav.home")}</a
+            >
+            <a
+              href={`/${lang}/menu`}
+              class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors"
+              >{t("nav.menu")}</a
+            >
+            <a
+              href={`/${lang}/sugerencias`}
+              class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors"
+              >{t("nav.suggestions")}</a
+            >
+            <a
+              href={`/${lang}/#reservaciones`}
+              class="px-5 py-2.5 rounded-full bg-orange-600 text-white text-sm font-bold shadow-lg shadow-orange-600/30 hover:bg-orange-700 hover:shadow-orange-600/50 hover:-translate-y-0.5 transition-all"
+              >{t("nav.reservations")}</a
+            >
+
+            <button
+              id="cart-toggle-btn"
+              class="relative p-2 text-stone-600 hover:text-orange-600 transition-colors"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                ><path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                ></path></svg
+              >
+              <span
+                id="cart-badge"
+                class="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center opacity-0 transform scale-0 transition-all duration-300"
+                >0</span
+              >
+            </button>
+
+            <!-- Language Switcher -->
+            <a
+              href={`/${otherLang}`}
+              class="flex items-center gap-1 text-sm font-bold text-stone-500 hover:text-orange-600 transition-colors ml-4 border-l pl-4 border-stone-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                ><path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+                ></path></svg
+              >
+              {t("lang.switch")}
+            </a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <div
+      id="cart-overlay"
+      class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300"
+    >
+    </div>
+    <div
+      id="cart-drawer"
+      class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col"
+    >
+      <div
+        class="p-6 border-b border-stone-200 flex justify-between items-center bg-stone-50"
+      >
+        <h2
+          class="text-2xl font-bold font-serif text-stone-900 flex items-center gap-2"
+        >
+          {t("cart.title")}
+        </h2>
+        <button
+          id="cart-close-btn"
+          class="p-2 text-stone-400 hover:text-stone-900 transition-colors rounded-full hover:bg-stone-200"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"></path></svg
+          >
+        </button>
+      </div>
+
+      <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4">
+        <div id="cart-empty-msg" class="text-center text-stone-500 mt-10">
+          <p>{t("cart.empty1")}</p>
+          <p class="text-sm mt-2">{t("cart.empty2")}</p>
+        </div>
+      </div>
+
+      <div class="p-6 border-t border-stone-200 bg-stone-50">
+        <div class="flex justify-between items-center mb-6">
+          <span class="text-stone-600 font-semibold">{t("cart.total")}</span>
+          <span id="cart-total" class="text-2xl font-bold text-stone-900"
+            >$0.00</span
+          >
+        </div>
+        <button
+          id="cart-checkout-btn"
+          class="w-full py-4 rounded-xl bg-orange-600 text-white font-bold text-lg shadow-lg hover:bg-orange-700 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50"
+        >
+          {t("cart.btn")}
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="cart-toast"
+      class="fixed bottom-6 right-6 bg-stone-900 text-white px-6 py-4 rounded-2xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-4 cursor-pointer hover:bg-stone-800"
+    >
+      <div class="bg-orange-500 rounded-full p-2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 text-white"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          ><path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 13l4 4L19 7"></path></svg
+        >
+      </div>
+      <div>
+        <p class="font-bold">{t("cart.toast.title")}</p>
+        <p class="text-sm text-stone-300">{t("cart.toast.desc")}</p>
+      </div>
+    </div>
+
+    <footer class="bg-stone-950 text-stone-300 py-16 border-t border-stone-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left"
+        >
+          <div class="flex flex-col items-center md:items-start gap-4">
+            <span class="text-3xl font-serif font-bold text-white">Saboria</span
+            >
+            <p class="text-sm text-stone-400 max-w-xs">{t("footer.desc")}</p>
+          </div>
+
+          <div class="flex flex-col items-center md:items-start gap-3">
+            <h3 class="text-lg font-bold text-white mb-2">
+              {t("footer.hours.title")}
+            </h3>
+            <p class="text-sm flex justify-between w-48">
+              <span class="text-stone-400">{t("footer.hours.1")}</span>
+              <span>{t("footer.hours.1v")}</span>
+            </p>
+            <p class="text-sm flex justify-between w-48">
+              <span class="text-stone-400">{t("footer.hours.2")}</span>
+              <span>{t("footer.hours.2v")}</span>
+            </p>
+            <p class="text-sm flex justify-between w-48">
+              <span class="text-stone-400">{t("footer.hours.3")}</span>
+              <span>{t("footer.hours.3v")}</span>
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center md:items-start gap-3">
+            <h3 class="text-lg font-bold text-white mb-2">
+              {t("footer.loc.title")}
+            </h3>
+            <p class="text-sm">{t("footer.loc.desc")}</p>
+          </div>
+        </div>
+        <div
+          class="mt-12 pt-8 border-t border-stone-800 text-center text-sm text-stone-500"
+        >
+          &copy; {new Date().getFullYear()} Saboria. {t("footer.rights")}
+        </div>
+      </div>
+    </footer>
+
+    <script
+      define:vars={{ lang, removeTxt: t("cart.remove"), qtyTxt: t("cart.qty") }}
+    >
+      let cart = [];
+
+      const cartToggleBtn = document.getElementById("cart-toggle-btn");
+      const cartCloseBtn = document.getElementById("cart-close-btn");
+      const cartDrawer = document.getElementById("cart-drawer");
+      const cartOverlay = document.getElementById("cart-overlay");
+      const cartBadge = document.getElementById("cart-badge");
+      const cartItemsContainer = document.getElementById("cart-items");
+      const cartEmptyMsg = document.getElementById("cart-empty-msg");
+      const cartTotal = document.getElementById("cart-total");
+      const cartCheckoutBtn = document.getElementById("cart-checkout-btn");
+      const cartToast = document.getElementById("cart-toast");
+
+      function openCart() {
+        cartDrawer.classList.remove("translate-x-full");
+        cartOverlay.classList.remove("opacity-0", "pointer-events-none");
+        updateCartUI();
+      }
+
+      function closeCart() {
+        cartDrawer.classList.add("translate-x-full");
+        cartOverlay.classList.add("opacity-0", "pointer-events-none");
+      }
+
+      cartToggleBtn?.addEventListener("click", openCart);
+      cartCloseBtn?.addEventListener("click", closeCart);
+      cartOverlay?.addEventListener("click", closeCart);
+      cartToast?.addEventListener("click", () => {
+        cartToast.classList.remove("translate-y-0", "opacity-100");
+        cartToast.classList.add("translate-y-20", "opacity-0");
+        openCart();
+      });
+
+      function saveCart() {
+        localStorage.setItem("saboria_cart", JSON.stringify(cart));
+      }
+      function loadCart() {
+        const saved = localStorage.getItem("saboria_cart");
+        if (saved) cart = JSON.parse(saved);
+        updateCartUI();
+      }
+
+      function showToast() {
+        cartToast.classList.remove("translate-y-20", "opacity-0");
+        cartToast.classList.add("translate-y-0", "opacity-100");
+        setTimeout(() => {
+          cartToast.classList.remove("translate-y-0", "opacity-100");
+          cartToast.classList.add("translate-y-20", "opacity-0");
+        }, 3000);
+      }
+
+      window.addToCart = function (name, priceStr, img) {
+        const price = parseFloat(priceStr.replace("$", ""));
+        const existing = cart.find((item) => item.name === name);
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          cart.push({ name, price, img, quantity: 1 });
+        }
+        saveCart();
+        updateCartUI();
+        showToast();
+      };
+
+      window.removeFromCart = function (name) {
+        cart = cart.filter((item) => item.name !== name);
+        saveCart();
+        updateCartUI();
+      };
+
+      function updateCartUI() {
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const totalPrice = cart.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0,
+        );
+
+        if (cartBadge) {
+          cartBadge.textContent = totalItems;
+          if (totalItems > 0) {
+            cartBadge.classList.remove("opacity-0", "scale-0");
+            cartBadge.classList.add("opacity-100", "scale-100");
+          } else {
+            cartBadge.classList.add("opacity-0", "scale-0");
+            cartBadge.classList.remove("opacity-100", "scale-100");
+          }
+        }
+
+        if (cartTotal) cartTotal.textContent = "$" + totalPrice.toFixed(2);
+        if (cartCheckoutBtn) cartCheckoutBtn.disabled = totalItems === 0;
+
+        if (cartItemsContainer) {
+          const itemsToRemove =
+            cartItemsContainer.querySelectorAll(".cart-item");
+          itemsToRemove.forEach((el) => el.remove());
+
+          if (totalItems === 0) {
+            cartEmptyMsg.style.display = "block";
+          } else {
+            cartEmptyMsg.style.display = "none";
+            cart.forEach((item) => {
+              const itemEl = document.createElement("div");
+              itemEl.className =
+                "cart-item flex gap-4 bg-white p-3 rounded-xl shadow-sm border border-stone-100";
+              itemEl.innerHTML = `
+                <img src="${item.img}" alt="${item.name}" class="w-20 h-20 object-cover rounded-lg">
+                <div class="flex-grow flex flex-col justify-between py-1">
+                  <div>
+                    <h4 class="font-bold text-stone-900 text-sm leading-tight">${item.name}</h4>
+                    <p class="text-orange-600 font-bold mt-1">$${item.price.toFixed(2)}</p>
+                  </div>
+                  <div class="flex justify-between items-center mt-2">
+                    <span class="text-xs text-stone-500 bg-stone-100 px-2 py-1 rounded-md">${qtyTxt} ${item.quantity}</span>
+                    <button onclick="removeFromCart('${item.name}')" class="text-red-500 hover:text-red-700 text-xs font-semibold">${removeTxt}</button>
+                  </div>
+                </div>
+              `;
+              cartItemsContainer.appendChild(itemEl);
+            });
+          }
+        }
+      }
+
+      cartCheckoutBtn?.addEventListener("click", () => {
+        alert("Orden confirmada / Order confirmed");
+        cart = [];
+        saveCart();
+        updateCartUI();
+        closeCart();
+      });
+
+      loadCart();
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .font-serif {
+    font-family: "Playfair Display", Georgia, serif;
+  }
+</style>

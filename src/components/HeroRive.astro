@@ -1,0 +1,50 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  riveSrc?: string;
+}
+
+const { title, description, riveSrc = '/animations/rive/banner_menu.riv' } = Astro.props;
+const canvasId = `rive-canvas-${Math.random().toString(36).substring(2, 9)}`;
+---
+
+<section class="py-20 bg-stone-900 text-center relative overflow-hidden h-96 flex items-center justify-center">
+  <canvas id={canvasId} class="rive-hero-canvas absolute inset-0 w-full h-full object-cover z-0 opacity-50" data-src={riveSrc}></canvas>
+  
+  <div class="relative z-10 max-w-4xl mx-auto px-4">
+    <h1 class="text-5xl md:text-7xl font-bold font-serif text-white mb-6 drop-shadow-lg">{title}</h1>
+    <p class="text-stone-200 text-lg drop-shadow-md">{description}</p>
+  </div>
+</section>
+
+<script>
+  import { Rive, Layout, Fit, Alignment } from "@rive-app/canvas";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const canvases = document.querySelectorAll('.rive-hero-canvas');
+    canvases.forEach((canvas) => {
+      const src = canvas.getAttribute('data-src');
+      // Asegurarnos de que no inicializamos el mismo canvas dos veces
+      if (src && !canvas.hasAttribute('data-rive-initialized')) {
+        canvas.setAttribute('data-rive-initialized', 'true');
+        const riveInstance = new Rive({
+          src: src,
+          canvas: canvas as HTMLCanvasElement,
+          autoplay: true,
+          layout: new Layout({
+            fit: Fit.Cover,
+            alignment: Alignment.Center,
+          }),
+          onLoad: () => {
+            riveInstance.resizeDrawingSurfaceToCanvas();
+          },
+        });
+
+        window.addEventListener("resize", () => {
+          riveInstance.resizeDrawingSurfaceToCanvas();
+        });
+      }
+    });
+  });
+</script>
